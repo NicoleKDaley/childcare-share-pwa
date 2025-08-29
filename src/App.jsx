@@ -1,48 +1,47 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "./firebase";
+
+
+
+// Pages
+import Login from "./src/pages/Login";
+import Register from "./src/pages/Register";
+import Dashboard from "./src/pages/Dashboard";
+import CalendarPage from "./src/pages/Calendar";
+import NotificationsPage from "./src/pages/Notifications";
+import VillagePage from "./src/pages/Village";
+import MessagingPage from "./src/pages/Messaging";
 
 function App() {
+  const [user, loading] = useAuthState(auth);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <p className="text-lg font-semibold">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <Router>
-      <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
-        {/* Header / Navigation */}
-        <header className="bg-blue-600 text-white shadow-md">
-          <nav className="container mx-auto flex justify-between items-center p-4">
-            <h1 className="text-xl font-bold">Childcare Share</h1>
-            <ul className="flex space-x-4">
-              <li><Link to="/dashboard" className="hover:underline">Dashboard</Link></li>
-              <li><Link to="/village" className="hover:underline">Village</Link></li>
-              <li><Link to="/messages" className="hover:underline">Messages</Link></li>
-              <li><Link to="/calendar" className="hover:underline">Calendar</Link></li>
-              <li><Link to="/tasks" className="hover:underline">Tasks</Link></li>
-              <li><Link to="/login" className="hover:underline">Login</Link></li>
-            </ul>
-          </nav>
-          <nav style={{ padding: "1rem", background: "#f4f4f4" }}>
-        <Link to="/" style={{ marginRight: "1rem" }}>Login</Link>
-        <Link to="/register" style={{ marginRight: "1rem" }}>Register</Link>
-        <Link to="/dashboard">Dashboard</Link>
-      </nav>
-        </header>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={user ? <Dashboard /> : <Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-        {/* Main Content */}
-        <main className="container mx-auto flex-1 p-6">
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-
-          </Routes>
-        </main>
-
-        {/* Footer */}
-        <footer className="bg-gray-200 text-center py-4 text-sm">
-          © {new Date().getFullYear()} Childcare Share. All rights reserved.
-        </footer>
-      </div>
+        {/* Protected routes (require login) */}
+        <Route path="/dashboard" element={user ? <Dashboard /> : <Login />} />
+        <Route path="/calendar" element={user ? <CalendarPage /> : <Login />} />
+        <Route
+          path="/notifications"
+          element={user ? <NotificationsPage /> : <Login />}
+        />
+        <Route path="/village" element={user ? <VillagePage /> : <Login />} />
+        <Route path="/messages" element={user ? <MessagingPage /> : <Login />} />
+      </Routes>
     </Router>
   );
 }
