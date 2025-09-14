@@ -18,6 +18,19 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.navbar button {
+  background: none;
+  border: none;
+  font-weight: 500;
+  color: #003366;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.navbar button:hover {
+  color: #0073e6;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
